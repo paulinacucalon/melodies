@@ -40,4 +40,5 @@ Maybe need fourier transforms or something?
 - Predict composer
 - Predict nationality of composer
 - Predict "type" (e.g. Sonata or Etude)
-- Moonshot: predict top charts.
+- Moonshot: predict top charts
+- Find classical piece most like pop song

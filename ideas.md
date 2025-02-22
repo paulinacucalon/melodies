@@ -14,9 +14,11 @@ Some potential ways we could vectorize MIDI files:
 1. Bag of notes
     - 88-dimensional vector of how many times each note is hit (assuming standard 88-key piano)
     - Could consolidate octaves to 12 or 24 dimensions (e.g. high octave and low octave)
+    - Can do weighted sums using volume or length instead of just counts
 2. Bag of chords
     - N-dimensional vector where we track how many combinations of notes are hit at once and make each new combination an entry in the vector
 3. TF/IDF
+4. Overtime representation, e.g. first X measures
 
 Questions
 - Encoding speed? I think it's based on time, not like whether it's a quarter note. So might be hard to split notes or chords into sub-buckets of note length.

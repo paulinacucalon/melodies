@@ -33,6 +33,7 @@ Maybe need fourier transforms or something?
 - PCA
 - ISOMAP
 - Embedding
+- t-SNE?
 
 ## Predictive Applications
 

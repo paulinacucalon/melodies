@@ -27,12 +27,16 @@ class MidiPathToDataFrame(TransformerMixin, BaseEstimator):
         dfs = []
         for i, filename in enumerate(X):
             if i % (len(X) // 20) == 0:
-                logger.debug(f'Loaded {i} of {len(X)}')
+                logger.info(f'Loaded {i} of {len(X)}')
             dfs.append(load_midi_to_df(self.data_dir / filename))
         return dfs
 
 
 class PreprocessMidiDataFrame(TransformerMixin, BaseEstimator):
+    """
+    Slims the dataframe to just notes played.
+    Will pass along a dataframe with `time_from_start`, `note`, `velocity`, and `duration` columns.
+    """
     def __init__(self):
         self.warn_cols = ['note_off', 'polytouch']
 
@@ -43,6 +47,7 @@ class PreprocessMidiDataFrame(TransformerMixin, BaseEstimator):
         processed = []
         for df in X:
             processed.append(self._transform_single(df))
+        return processed
 
     def _transform_single(self, df: pd.DataFrame) -> pd.DataFrame:
         for col in self.warn_cols:
@@ -51,9 +56,10 @@ class PreprocessMidiDataFrame(TransformerMixin, BaseEstimator):
         # TODO: standardize time based on time signature metadata
         df['time_from_start'] = df.time.cumsum()
         df = df[df.type == 'note_on']
-        # TODO: add a duration column
+        df['next_note_event_time'] = df.groupby('note').shift(-1)['time_from_start']
+        df['duration'] = df.next_note_event_time - df.time_from_start
         df = df[df.velocity > 0]
-        df = df[['time_from_start', 'note', 'velocity']]
+        df = df[['time_from_start', 'note', 'velocity', 'duration']].reset_index(drop=True)
         return df
 
 
